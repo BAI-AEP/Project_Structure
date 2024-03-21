@@ -8,7 +8,6 @@ def load_db():
     # required data
     pass
 
-
 def show_welcome():
     print("Welcome to hotel reservation system <customize>")
     # add more instructions or information as desired

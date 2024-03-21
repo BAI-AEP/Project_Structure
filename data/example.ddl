@@ -5,10 +5,25 @@ CREATE TABLE address (
 	city VARCHAR NOT NULL, 
 	PRIMARY KEY (id)
 );
+CREATE TABLE role (
+	name VARCHAR NOT NULL, 
+	access_level INTEGER NOT NULL, 
+	PRIMARY KEY (name)
+);
+CREATE TABLE login (
+	id INTEGER NOT NULL, 
+	username VARCHAR NOT NULL, 
+	password VARCHAR NOT NULL, 
+	role_name VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	UNIQUE (username), 
+	FOREIGN KEY(role_name) REFERENCES role (name)
+);
 CREATE TABLE guest (
 	id INTEGER NOT NULL, 
 	firstname VARCHAR NOT NULL, 
 	lastname VARCHAR NOT NULL, 
+	email VARCHAR NOT NULL, 
 	address_id INTEGER NOT NULL, 
 	type VARCHAR NOT NULL, 
 	PRIMARY KEY (id), 
@@ -16,11 +31,10 @@ CREATE TABLE guest (
 );
 CREATE TABLE registred_guest (
 	id INTEGER NOT NULL, 
-	email VARCHAR NOT NULL, 
-	password VARCHAR NOT NULL, 
+	login_id INTEGER NOT NULL, 
 	PRIMARY KEY (id), 
 	FOREIGN KEY(id) REFERENCES guest (id), 
-	UNIQUE (email)
+	FOREIGN KEY(login_id) REFERENCES login (id)
 );
 CREATE TABLE hotel (
 	id INTEGER NOT NULL, 

@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QLineEdit, QComboBox, QPushButton, QMainWindow, QApp
 from sqlalchemy import create_engine, exc
 from sqlalchemy.orm import Session
 
-from da.data_models import *
+from data_models.models import *
 
 
 class NameAddressValidator(QtGui.QRegularExpressionValidator):

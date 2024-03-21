@@ -1,11 +1,12 @@
 import datetime
+import sys
 from datetime import date
 from random import seed, choices
 
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import Session
 
-from data_access.data_models import *
+from data_models.models import *
 
 
 def generate_hotels(engine: Engine):
@@ -108,7 +109,8 @@ def generate_guests(engine: Engine):
                     street="Bachstrasse 12",
                     zip="5000",
                     city="Aarau"
-                )
+                ),
+                email="hans.müller@gmail.com"
             ),
             Guest(
                 firstname="Anna",
@@ -117,7 +119,8 @@ def generate_guests(engine: Engine):
                     street="Munzingerstrasse 17C",
                     zip="3007",
                     city="Bern"
-                )
+                ),
+                email="anna.becker@gmail.com"
             ),
             Guest(
                 firstname="Bettina",
@@ -126,11 +129,19 @@ def generate_guests(engine: Engine):
                     street="Im Egeli 23",
                     zip="8700",
                     city="Küsnacht"
-                )
+                ),
+                email="bettina.braun@gmail.com"
             )
         ]
 
         session.add_all(guests_to_add)
+        session.commit()
+
+def generate_system_data(engine: Engine):
+    with Session(engine) as session:
+        administrator = Role(name="administrator", access_level=sys.maxsize)
+        registered_user = Role(name="registered_user", access_level=1)
+        session.add_all([administrator, registered_user])
         session.commit()
 
 
@@ -141,22 +152,30 @@ def generate_registered_guests(engine: Engine):
                 firstname="Sabrina",
                 lastname="Schmidt",
                 email="sabrina.schmidt@bluemail.ch",
-                password="SuperSecretPassword",
                 address=Address(
                     street="Goethestrasse 26",
                     zip="9008",
                     city="St. Gallen"
+                ),
+                login=Login(
+                    username="sabrina.schmidt@bluemail.ch",
+                    password="SuperSecret",
+                    role=session.query(Role).filter(Role.name == "registered_user").one()
                 )
             ),
             RegisteredGuest(
                 firstname="Laura",
                 lastname="Jackson",
                 email="laura.jackson@bluemail.ch",
-                password="SuperSecretPassword",
                 address=Address(
                     street="Tödistrasse 49",
                     zip="8002",
                     city="Zürich"
+                ),
+                login=Login(
+                    username="laura.jackson@bluemail.ch",
+                    password="SuperSecret",
+                    role=session.query(Role).filter(Role.name == "registered_user").one()
                 )
             )
         ]

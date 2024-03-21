@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from sqlalchemy.schema import CreateTable
 
-from data_access.data_models import *
+from data_models.models import *
 
 from data_access.data_generator import generate_hotels, generate_guests, generate_registered_guests, generate_random_bookings, \
     generate_random_registered_bookings

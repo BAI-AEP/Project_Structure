@@ -7,11 +7,13 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
+
 class Base(DeclarativeBase):
     '''
     Basis Klasse für unser Model. Daraus kann SQLAlchemy herleiten welche Klassen zu unserem Modell gehören.
     '''
     pass
+
 
 class Address(Base):
     '''
@@ -26,6 +28,28 @@ class Address(Base):
     def __repr__(self) -> str:
         return f"Address(id={self.id!r}, street={self.street!r}, city={self.city!r}, zip={self.zip!r})"
 
+
+class Role(Base):
+    __tablename__ = "role"
+    name: Mapped[str] = mapped_column(primary_key=True)
+    access_level: Mapped[int] = mapped_column()
+
+    def __repr__(self) -> str:
+        return f"Role(name={self.name!r}, access_level={self.access_level!r})"
+
+
+class Login(Base):
+    __tablename__ = "login"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(unique=True)
+    password: Mapped[str] = mapped_column()
+    role_name: Mapped[int] = mapped_column(ForeignKey("role.name"))
+    role: Mapped[Role] = relationship()
+
+    def __repr__(self):
+        return f"Login("
+
+
 class Guest(Base):
     '''
     Gast Entitätstyp.
@@ -34,6 +58,7 @@ class Guest(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     firstname: Mapped[str] = mapped_column()
     lastname: Mapped[str] = mapped_column()
+    email: Mapped[str] = mapped_column()
     address_id: Mapped[int] = mapped_column(ForeignKey("address.id"))
     address: Mapped["Address"] = relationship()
     type: Mapped[str]
@@ -45,15 +70,16 @@ class Guest(Base):
 
     def __repr__(self) -> str:
         return f"Guest(id={self.id!r}, firstname={self.firstname!r}, lastname={self.lastname!r}, address={self.address!r})"
-    
+
+
 class RegisteredGuest(Guest):
     '''
     Registrier Gast Entitätstyp.
     '''
     __tablename__ = "registred_guest"
     id: Mapped[int] = mapped_column(ForeignKey("guest.id"), primary_key=True)
-    email: Mapped[str] = mapped_column(unique=True)
-    password: Mapped[str] = mapped_column()
+    login_id: Mapped[int] = mapped_column(ForeignKey("login.id"))
+    login: Mapped[Login] = relationship()
     bookings: Mapped[List["Booking"]] = relationship(back_populates="guest")
 
     __mapper_args__ = {
@@ -61,7 +87,8 @@ class RegisteredGuest(Guest):
     }
 
     def __repr__(self) -> str:
-        return f"RegisteredGuest(id={self.id!r}, firstname={self.firstname!r}, lastname={self.lastname!r}, address={self.address!r}, email={self.email!r}, password={self.password!r})"
+        return f"RegisteredGuest(id={self.id!r}, firstname={self.firstname!r}, lastname={self.lastname!r}, email={self.email!r}, address={self.address!r})"
+
 
 class Hotel(Base):
     '''
@@ -78,6 +105,7 @@ class Hotel(Base):
     def __repr__(self) -> str:
         return f"Hotel(id={self.id!r}, name={self.name!r}, stars={self.stars}, address={self.address})"
 
+
 class RoomType(Base):
     '''
     Raumtyp Entitätstyp.
@@ -89,6 +117,7 @@ class RoomType(Base):
     def __repr__(self) -> str:
         return f"RoomType(id={self.id!r}, description={self.description!r})"
 
+
 class Amenity(Base):
     '''
     Einrichtung Entitätstyp.
@@ -99,7 +128,8 @@ class Amenity(Base):
 
     def __repr__(self) -> str:
         return f"Amenity(id={self.id!r}, description={self.description!r})"
-    
+
+
 class RoomAmenity(Base):
     __tablename__ = "room_amenity"
     room_hotel_id: Mapped[int] = mapped_column(primary_key=True)
@@ -113,6 +143,7 @@ class RoomAmenity(Base):
         ),
     )
 
+
 class Room(Base):
     '''
     Raum Entitätstyp.
@@ -124,7 +155,7 @@ class Room(Base):
     type_id: Mapped[str] = mapped_column(ForeignKey("room_type.id"))
     type: Mapped["RoomType"] = relationship()
     max_guests: Mapped[int] = mapped_column()
-    #beds: Mapped[List["Bed"]] = relationship()
+    # beds: Mapped[List["Bed"]] = relationship()
     description: Mapped[str] = mapped_column()
     amenities: Mapped[List["Amenity"]] = relationship(secondary='room_amenity')
     price: Mapped[float] = mapped_column()
@@ -132,10 +163,11 @@ class Room(Base):
     def __repr__(self) -> str:
         return f"Room(hotel={self.hotel!r}, room_number={self.number!r}, type={self.type!r}, description={self.description!r}, price={self.price!r})"
 
+
 class Booking(Base):
     __tablename__ = "booking"
 
-    id:Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     room_hotel_id: Mapped[int] = mapped_column()
     room_number: Mapped[str] = mapped_column()
     room: Mapped["Room"] = relationship()
