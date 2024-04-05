@@ -9,7 +9,26 @@ from sqlalchemy.orm import Session
 from data_models.models import *
 
 
-def generate_hotels(engine: Engine):
+def generate_system_data(engine: Engine, verbose: bool = False) -> None:
+    with Session(engine) as session:
+        administrator = Role(name="administrator", access_level=sys.maxsize)
+        registered_user = Role(name="registered_user", access_level=1)
+        admin_login = Login(username="admin", password="password", role=administrator)
+        session.add_all([administrator, registered_user, admin_login])
+        session.commit()
+        if verbose:
+            print("#" * 50)
+            print("Roles added:", 2)
+            print("#" * 50)
+            print(administrator)
+            print(registered_user)
+            print("#" * 50)
+            print("Login added:", 1)
+            print("#" * 50)
+            print(admin_login)
+
+
+def generate_hotels(engine: Engine, verbose: bool = False) -> None:
     with Session(engine) as session:
         single_room = RoomType(description="Einzelzimmer")
         double_room = RoomType(description="Doppelzimmer")
@@ -24,7 +43,7 @@ def generate_hotels(engine: Engine):
         iron = Amenity(description="Bügeleisen")
         session.add_all([tv43, tv50, tee_cooker, nespresso, iron])
 
-        hotels_to_insert = [
+        hotels_to_add = [
             Hotel(
                 name="Hotel Amaris",
                 stars=3,
@@ -95,11 +114,22 @@ def generate_hotels(engine: Engine):
             )
         ]
 
-        session.add_all(hotels_to_insert)
+        session.add_all(hotels_to_add)
         session.commit()
 
+        if verbose:
+            print("#" * 50)
+            print("Hotels added:", len(hotels_to_add))
+            print("#" * 50)
+            for hotel in hotels_to_add:
+                print(hotel)
+                for room in hotel.rooms:
+                    print(f"{' ' * 5}{room}")
+                    for amenity in room.amenities:
+                        print(f"{' ' * 10}{amenity}")
 
-def generate_guests(engine: Engine):
+
+def generate_guests(engine: Engine, verbose):
     with Session(engine) as session:
         guests_to_add = [
             Guest(
@@ -136,16 +166,15 @@ def generate_guests(engine: Engine):
 
         session.add_all(guests_to_add)
         session.commit()
+        if verbose:
+            print("#" * 50)
+            print("Guests added:", len(guests_to_add))
+            print("#" * 50)
+            for guest in guests_to_add:
+                print(guest)
 
-def generate_system_data(engine: Engine):
-    with Session(engine) as session:
-        administrator = Role(name="administrator", access_level=sys.maxsize)
-        registered_user = Role(name="registered_user", access_level=1)
-        session.add_all([administrator, registered_user])
-        session.commit()
 
-
-def generate_registered_guests(engine: Engine):
+def generate_registered_guests(engine: Engine, verbose):
     with Session(engine) as session:
         registered_guests_to_add = [
             RegisteredGuest(
@@ -182,6 +211,13 @@ def generate_registered_guests(engine: Engine):
         session.add_all(registered_guests_to_add)
         session.commit()
 
+        if verbose:
+            print("#" * 50)
+            print("Registered guests added:", len(registered_guests_to_add))
+            print("#" * 50)
+            for guest in registered_guests_to_add:
+                print(guest)
+
 
 def generate_booking_dates(k: int = 20, s: int = 1):
     seed(s)
@@ -198,7 +234,7 @@ def generate_booking_dates(k: int = 20, s: int = 1):
     return start_day_choices, end_day_choices
 
 
-def generate_random_bookings(engine: Engine, k: int = 20, s: int = 1):
+def generate_random_bookings(engine: Engine, k: int = 20, s: int = 1, verbose: bool = False):
     seed(s)
     start_days, end_days = generate_booking_dates(k, s)
 
@@ -228,9 +264,15 @@ def generate_random_bookings(engine: Engine, k: int = 20, s: int = 1):
             )
         session.add_all(bookings_to_add)
         session.commit()
+        if verbose:
+            print("#" * 50)
+            print("Bookings added:", len(bookings_to_add))
+            print("#" * 50)
+            for booking in bookings_to_add:
+                print(booking)
 
 
-def generate_random_registered_bookings(engine: Engine, k: int = 5, s: int = 1):
+def generate_random_registered_bookings(engine: Engine, k: int = 5, s: int = 1, verbose: bool = False):
     seed(s)
     start_days, end_days = generate_booking_dates(k, s)
     with Session(engine) as session:
@@ -258,3 +300,9 @@ def generate_random_registered_bookings(engine: Engine, k: int = 5, s: int = 1):
             )
         session.add_all(registered_bookings_to_add)
         session.commit()
+        if verbose:
+            print("#" * 50)
+            print("Registred bookings added:", len(registered_bookings_to_add))
+            print("#" * 50)
+            for booking in registered_bookings_to_add:
+                print(booking)
