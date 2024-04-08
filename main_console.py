@@ -1,13 +1,15 @@
 # from search import SearchManager
 # from register import UserManager
 from data_access import data_loader as dl
+from data_access.data_base import *
 
+
+DB_PATH = './data/hotel_reservation.db'
 
 def load_db():
     # Import relevant data classes and initialize objects for hotels, registered users, admin users and other
     # required data
     pass
-
 
 def show_welcome():
     print("Welcome to hotel reservation system <customize>")
@@ -42,7 +44,10 @@ def navigate():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # later replace with load_sqlite_db()
-    load_db()
+    #load_db()
+
+    init_db(DB_PATH, True, True, True)
+
     # try:
     #     dl.load_data_from_sqlite()
     # except Exception as e:
@@ -54,4 +59,4 @@ if __name__ == '__main__':
     show_menu()
 
     # can be replaced with individual screens for different function like register, login, search etc.
-    navigate()
+    #navigate()
