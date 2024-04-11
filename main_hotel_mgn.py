@@ -36,17 +36,19 @@ class HotelManagementMenu(Menu):
         self.clear()
         print("Creating new Hotel")
         hotel_name = input("Hotel Name: ")
-        hotel_street = input("Hotel Address: ")
+        hotel_stars = input("Hotel Stars: ")
+        hotel_street = input("Hotel Street: ")
         hotel_city = input("Hotel City: ")
         hotel_zip = input("Hotel Zip: ")
-        hotel_stars = input("Hotel Stars: ")
 
+
+        new_address = Address(street=hotel_street, zip=hotel_zip, city=hotel_city)
         new_hotel = Hotel(name=hotel_name, stars=hotel_stars,
-                          address=Address(street=hotel_street, zip=hotel_zip, city=hotel_city))
+                          address=new_address)
         self.clear()
         print(new_hotel)
 
-        answer = input("Should this hotel be stored in another hotel? (y/n): ").lower()
+        answer = input("Should this hotel be stored? (y/n): ").lower()
         while answer not in ["y", "n"]:
             print("Invalid input. Please try again.")
             answer = input("Should this hotel be stored in another hotel? (Y/n): ").lower()
