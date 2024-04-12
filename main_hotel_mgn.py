@@ -82,8 +82,13 @@ class MainMenu(Menu):
 
 if __name__ == '__main__':
     DB_FILE = './data/hotel_reservation.db'
-    if not os.path.exists(DB_FILE):
-        init_db(DB_FILE, generate_example_data=True)
+    ALWAYS_CREATE_NEW_DB = True
+    TEST_DATA = True
+    if ALWAYS_CREATE_NEW_DB:
+        init_db(DB_FILE, generate_example_data=TEST_DATA)
+    else:
+        if not os.path.exists(DB_FILE):
+            init_db(DB_FILE, generate_example_data=TEST_DATA)
     engine = create_engine(f'sqlite:///{DB_FILE}', echo=False)
     session_factory = sessionmaker(bind=engine)
     app = Application(MainMenu())
