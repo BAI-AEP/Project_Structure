@@ -9,7 +9,8 @@ class Console(object):
     def run(self):
         raise NotImplementedError("Implement this method")
 
-    def clear(self):
+    @staticmethod
+    def clear():
         os.system('cls' if os.name == 'nt' else 'clear')
 
 

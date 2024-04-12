@@ -33,7 +33,7 @@ class HotelManagementMenu(Menu):
         input("Press Enter to continue...")
 
     def create_new_hotel(self):
-        self.clear()
+        Console.clear()
         print("Creating new Hotel")
         hotel_name = input("Hotel Name: ")
         hotel_stars = input("Hotel Stars: ")
@@ -44,7 +44,7 @@ class HotelManagementMenu(Menu):
         new_address = Address(street=hotel_street, zip=hotel_zip, city=hotel_city)
         new_hotel = Hotel(name=hotel_name, stars=hotel_stars,
                           address=new_address)
-        self.clear()
+        Console.clear()
         print(new_hotel)
 
         answer = input("Should this hotel be stored? (y/n): ").lower()
