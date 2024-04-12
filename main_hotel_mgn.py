@@ -26,7 +26,7 @@ class HotelManagementMenu(Menu):
                 return self._back
 
     def show_all_hotels(self):
-        session = scoped_session(sessionfactory)
+        session = scoped_session(session_factory)
         hotels = session.query(Hotel).all()
         for hotel in hotels:
             print(hotel)
@@ -41,7 +41,6 @@ class HotelManagementMenu(Menu):
         hotel_city = input("Hotel City: ")
         hotel_zip = input("Hotel Zip: ")
 
-
         new_address = Address(street=hotel_street, zip=hotel_zip, city=hotel_city)
         new_hotel = Hotel(name=hotel_name, stars=hotel_stars,
                           address=new_address)
@@ -54,7 +53,7 @@ class HotelManagementMenu(Menu):
             answer = input("Should this hotel be stored in another hotel? (Y/n): ").lower()
         match answer:
             case "y":
-                session = scoped_session(sessionfactory)
+                session = scoped_session(session_factory)
                 session.add(new_hotel)
                 session.commit()
                 print("Saved!")
@@ -62,7 +61,6 @@ class HotelManagementMenu(Menu):
             case "n":
                 print("Save aborted!")
                 input("Press Enter to continue...")
-
 
 
 class MainMenu(Menu):
@@ -77,9 +75,9 @@ class MainMenu(Menu):
             case 1:
                 return self.hotel_mgn_menu
             case 2:
-                session = scoped_session(sessionfactory)
+                session = scoped_session(session_factory)
                 session.close()
-                sys.exit(0)
+                return None
 
 
 if __name__ == '__main__':
@@ -87,6 +85,6 @@ if __name__ == '__main__':
     if not os.path.exists(DB_FILE):
         init_db(DB_FILE, generate_example_data=True)
     engine = create_engine(f'sqlite:///{DB_FILE}', echo=False)
-    sessionfactory = sessionmaker(bind=engine)
+    session_factory = sessionmaker(bind=engine)
     app = Application(MainMenu())
     app.run()

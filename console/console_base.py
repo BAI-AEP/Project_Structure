@@ -16,19 +16,11 @@ class Console(object):
 class Application(object):
 
     def __init__(self, start: Console):
-        self._console: Console = start
-        self._is_running = False
-
-    def set_console(self, console: Console):
-        self._console = console
-
-    def stop(self):
-        self._is_running = False
+        self._current: Console = start
 
     def run(self):
-        self._is_running = True
-        while self._is_running:
-            self._console = self._console.run()
+        while self._current:
+            self._current = self._current.run()
 
 
 class Menu(Console):
