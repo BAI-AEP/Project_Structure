@@ -6,28 +6,12 @@ from data_access.data_base import *
 from data_models.models import *
 
 
-class HotelManagementMenu(Menu):
-    def __init__(self, back: Menu):
-        super().__init__("Hotel Management")
-        self._options.append(MenuOption("Create new Hotel"))
-        self._options.append(MenuOption("Show all Hotels"))
-        self._options.append(MenuOption("Back"))
-        self._back = back
-
-    def _navigation(self, choice: int):
-        match choice:
-            case 1:
-                self.create_new_hotel()
-                return self
-            case 2:
-                self.show_all_hotels()
-                return self
-            case 3:
-                return self._back
+class HotelManager(object):
+    def __init__(self, session_maker):
+        self._session = scoped_session(session_maker)
 
     def show_all_hotels(self):
-        session = scoped_session(session_factory)
-        hotels = session.query(Hotel).all()
+        hotels = self._session.query(Hotel).all()
         for hotel in hotels:
             print(hotel)
         input("Press Enter to continue...")
@@ -53,14 +37,35 @@ class HotelManagementMenu(Menu):
             answer = input("Should this hotel be stored in another hotel? (Y/n): ").lower()
         match answer:
             case "y":
-                session = scoped_session(session_factory)
-                session.add(new_hotel)
-                session.commit()
+                self._session.add(new_hotel)
+                self._session.commit()
                 print("Saved!")
                 input("Press Enter to continue...")
             case "n":
                 print("Save aborted!")
                 input("Press Enter to continue...")
+
+
+class HotelManagementMenu(Menu):
+    def __init__(self, back: Menu):
+        super().__init__("Hotel Management")
+        self._options.append(MenuOption("Create new Hotel"))
+        self._options.append(MenuOption("Show all Hotels"))
+        self._options.append(MenuOption("Back"))
+        self._back = back
+
+        self._hotel_manager = HotelManager(session_factory)
+
+    def _navigation(self, choice: int):
+        match choice:
+            case 1:
+                self._hotel_manager.create_new_hotel()
+                return self
+            case 2:
+                self._hotel_manager.show_all_hotels()
+                return self
+            case 3:
+                return self._back
 
 
 class MainMenu(Menu):
