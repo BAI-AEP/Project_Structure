@@ -1,5 +1,4 @@
 import os
-from optparse import Option
 
 
 class Console(object):
@@ -24,6 +23,20 @@ class Application(object):
             self._current = self._current.run()
 
 
+class MenuOption(object):
+    def __init__(self, title):
+        self._title = title
+
+    def get_title(self) -> str:
+        return self._title
+
+    def __str__(self):
+        return self._title
+
+    def __len__(self):
+        return len(self._title)
+
+
 class Menu(Console):
     def __init__(self, title):
         super().__init__()
@@ -37,10 +50,10 @@ class Menu(Console):
     def get_options(self) -> list:
         return self._options
 
-    def add_option(self, option: Option):
+    def add_option(self, option: MenuOption):
         self._options.append(option)
 
-    def remove_option(self, option: Option):
+    def remove_option(self, option: MenuOption):
         self._options.remove(option)
 
     def show(self):
@@ -72,17 +85,3 @@ class Menu(Console):
 
     def _navigation(self, choice: int):
         raise NotImplementedError("Implement this method")
-
-
-class MenuOption(object):
-    def __init__(self, title):
-        self._title = title
-
-    def get_title(self) -> str:
-        return self._title
-
-    def __str__(self):
-        return self._title
-
-    def __len__(self):
-        return len(self._title)
