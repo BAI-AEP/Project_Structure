@@ -38,11 +38,11 @@ class MenuOption(object):
 
 
 class Menu(Console):
-    def __init__(self, title):
+    def __init__(self, title, width=50):
         super().__init__()
         self._title = title
         self._options = []
-        self._width = 50
+        self._width = width
 
     def __iter__(self):
         return iter(self._options)
@@ -72,7 +72,7 @@ class Menu(Console):
     def run(self) -> Console:
         self.clear()
         self.show()
-        return self._navigation(self.make_choice())
+        return self._navigate(self.make_choice())
 
     def make_choice(self) -> int:
         choice = input("Enter Option: ")
@@ -83,5 +83,5 @@ class Menu(Console):
             choice = input("Enter Option: ")
         return int(choice)
 
-    def _navigation(self, choice: int):
+    def _navigate(self, choice: int):
         raise NotImplementedError("Implement this method")

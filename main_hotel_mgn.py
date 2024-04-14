@@ -56,7 +56,7 @@ class HotelManagementMenu(Menu):
 
         self._hotel_manager = HotelManager(session_factory)
 
-    def _navigation(self, choice: int):
+    def _navigate(self, choice: int):
         match choice:
             case 1:
                 self._hotel_manager.create_new_hotel()
@@ -75,7 +75,7 @@ class MainMenu(Menu):
         self._options.append(MenuOption("Quit"))
         self.hotel_mgn_menu = HotelManagementMenu(self)
 
-    def _navigation(self, choice: int):
+    def _navigate(self, choice: int):
         match choice:
             case 1:
                 return self.hotel_mgn_menu
